@@ -1,0 +1,22 @@
+<html style="overflow: hidden; margin: 0; padding: 0; height: 100%;">
+  
+  <head>
+    <meta name="viewport" content="width=device-width, minimum-scale=0.1">
+    <title>create-qr-code (45×45)</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  </head>
+  
+  <body style="overflow: hidden; margin: 0; padding: 0; background: #0e0e0e; height: 100%">
+    <img id="qr"; style="width: 100%; margin: 0; padding: 0; display: block;-webkit-user-select: none;margin: auto;background-color: hsl(0, 0%, 90%);transition: background-color 300ms;" src="">
+  </body>
+
+  <script>
+    var baseSizeAxisInt = window.innerWidth //Math.round($(window).width())
+    var baseSizeAxis = baseSizeAxisInt.toString()
+    
+    $("#qr").attr(
+      "src",
+      "https://api.qrserver.com/v1/create-qr-code/?data={{ data }}&size=" + baseSizeAxis + "x" + baseSizeAxis + "&color=" + "{{ color }}"
+    )
+  </script>
+</html>

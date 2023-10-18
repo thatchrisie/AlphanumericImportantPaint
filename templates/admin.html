@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      @import url('https://fonts.googleapis.com/css?family=Roboto');
+      
+      body {
+        font-family: font-family: 'Roboto', Arial, sans-serif;
+        background-color: #f0f0f0;
+        margin: 0;
+        padding: 0;
+      }
+
+      h3 {
+        color: #333;
+        margin-bottom: 10px;
+        margin-left: 10px; /* Offset from the left */
+      }
+
+      h2 { 
+        margin-left: 10px; /* Offset from the left */
+      }
+
+      /* Add separators between lists */
+      h2 + ul, h3 + ul {
+        border-left: 2px solid #0066cc;
+        margin-left: 10px; /* Offset from the left */
+      }
+      
+      table {
+        font-family: 'Roboto', Arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+        display: table;
+        border-collapse: separate;
+        box-sizing: border-box;
+        text-indent: initial;
+        border-spacing: 2px;
+        border-color: grey;
+        margin-left: 10px; /* Offset from the left */
+      }
+
+      th, td {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+      }
+
+      th {
+        background-color: #0066cc;
+        color: #fff;
+      }
+
+      tr:nth-child(even) {background-color: #dddddd;}
+      tr:hover {background-color: #D6EEEE;}
+
+      label {
+        font-weight: bold;
+        color: #333;
+        margin-left: 10px; /* Offset from the left */
+      }
+
+      input[type="text"] {
+        padding: 5px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-left: 10px; /* Offset from the left */
+      }
+
+      input[type="submit"] {
+        background-color: #0066cc;
+        color: #fff;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-left: 10px; /* Offset from the left */
+      }
+
+      .edit-button, .save-button {
+        background-color: #0066cc;
+        color: #fff;
+        padding: 5px 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      .edit-input {
+        padding: 5px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      
+    </style>
+    
+  </head>
+  
+  <body>Swish App Beta
+    <br>
+    {{ flaskIndex|safe }}
+
+
+    
+    <h2>Password Configurations</h2>
+
+    
+    <h3>Swish</h5>
+    
+    <iframe name="hiddenFrame" width="0" height="0" border="0" style="display: none;"></iframe>
+    
+    <form action="{{ url_for('processForm') }}" id="whitelistForm" method="post" name="whitelistForm" target="hiddenFrame">
+      <label for="passwordToAdd">Add/Whitelist a Password:</label>
+      <input type="text" id="passwordToAdd" name="passwordToAdd">
+      <br>
+      <input type="submit" value="Submit">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    </form>
+    
+    <br>
+    
+    <form action="{{ url_for('processForm') }}" id="blacklistForm" method="post" name="blacklistForm" target="hiddenFrame">
+      <label for="passwordToRemove">Blacklist a Password:</label>
+      <input type="text" id="passwordToRemove" name="passwordToRemove">
+      <br>
+      <input type="submit" value="Submit">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    </form>
+    
+    <br>
+    
+    <form action="{{ url_for('processForm') }}" id="deleteForm" method="post" name="deleteForm" target="hiddenFrame">
+      <label for="passwordToDelete">Delete/Wipe a Password:</label>
+      <input type="text" id="passwordToDelete" name="passwordToDelete">
+      <br>
+      <input type="submit" value="Submit">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    </form>
+    
+    <br>
+    
+    <table id="swishlist" style="width:50%">
+      <tr>
+        <th>Password</th>
+        <th>IsWhitelisted</th>
+        <th>Remaining Time</th>
+        <th>Action</th>
+      </tr>
+      
+      {% for item, value in dbPasswords.items(): %}
+        <tr class="swishHoverRow">
+          <td class="item-cell">{{ item }}</td>
+          <td class="value-cell">{{ value["iswhitelisted"] }}</td>
+          <td class="expiry-cell">{{ value["expiryUTC"] - time}}</td>
+          <td>
+              <button class="edit-button">Edit</button>
+              <input type="text" class="edit-input" style="display:none;">
+              <button class="save-button" style="display:none;" onclick="
+                saveRow(
+                  this,
+                  '{{ url_for('processForm') }}'
+                )">Save</button>
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        </td>
+        </tr>
+      {% endfor %}
+    </table>
+
+
+    <h3>Freja</h5>
+    
+    <form action="{{ url_for('processForm') }}" id="frejawhitelistForm" method="post" name="frejawhitelistForm" target="hiddenFrame">
+      <label for="passwordToAdd">Add/Whitelist a Password:</label>
+      <input type="text" id="passwordToAdd" name="passwordToAdd">
+      <br>
+      <input type="submit" value="Submit">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    </form>
+    
+    <br>
+    
+    <form action="{{ url_for('processForm') }}" id="frejablacklistForm" method="post" name="frejablacklistForm" target="hiddenFrame">
+      <label for="passwordToRemove">Blacklist a Password:</label>
+      <input type="text" id="passwordToRemove" name="passwordToRemove">
+      <br>
+      <input type="submit" value="Submit">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    </form>
+    
+    <br>
+    
+    <form action="{{ url_for('processForm') }}" id="frejadeleteForm" method="post" name="frejadeleteForm" target="hiddenFrame">
+      <label for="passwordToDelete">Delete/Wipe a Password:</label>
+      <input type="text" id="passwordToDelete" name="passwordToDelete">
+      <br>
+      <input type="submit" value="Submit">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    </form>
+    
+    <br>
+    
+    <table id="frejalist" style="width:50%">
+      <tr>
+        <th>Password</th>
+        <th>IsWhitelisted</th>
+        <th>Action</th>
+      </tr>
+      
+      {% for item, value in dbFrejaPasswords.items(): %}
+        <tr class="frejaHoverRow">
+          <td class="item-cell">{{ item }}</td>
+          <td class="value-cell">{{ value["iswhitelisted"] }}</td>
+          <td>
+              <button class="edit-button">Edit</button>
+              <input type="text" class="edit-input" style="display:none;">
+              <button class="save-button" style="display:none;" onclick="
+                saveRow(
+                  this,
+                  '{{ url_for('processForm') }}'
+                )">Save</button>
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        </td>
+        </tr>
+      {% endfor %}
+    </table>
+    
+    <script type="text/javascript"
+         src="{{ url_for('static', filename='js/script.js') }}"></script>
+  </body>
+</html>
