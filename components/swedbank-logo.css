@@ -1,0 +1,35 @@
+.swedbank-logo-container {
+  width: auto;
+  height: auto;
+  display: flex;
+  position: relative;
+  align-items: flex-start;
+  flex-direction: column;
+  justify-content: center;
+}
+.swedbank-logo-image {
+  width: 200px;
+  object-fit: cover;
+}
+.swedbank-logo-root-class-name {
+  align-self: center;
+}
+@media(max-width: 479px) {
+  .swedbank-logo-container {
+    width: 46%;
+    height: 45px;
+    margin-bottom: 0px;
+    flex-direction: column;
+  }
+  .swedbank-logo-image {
+    width: 100%;
+    height: auto;
+    align-self: center;
+  }
+  .swedbank-logo-root-class-name {
+    top: 65px;
+    left: 0px;
+    right: 0px;
+    position: static;
+  }
+}

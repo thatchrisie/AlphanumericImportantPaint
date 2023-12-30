@@ -1,0 +1,46 @@
+.swish-logo-huge-container {
+  width: 100%;
+  height: auto;
+  display: flex;
+  position: relative;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+.swish-logo-huge-image {
+  width: 200px;
+  object-fit: cover;
+}
+.swish-logo-huge-root-class-name {
+  margin-top: 0px;
+  margin-left: var(--dl-space-space-twounits);
+  margin-right: var(--dl-space-space-twounits);
+  margin-bottom: var(--dl-space-space-sixunits);
+}
+@media(max-width: 767px) {
+  .swish-logo-huge-image {
+    width: 150px;
+  }
+}
+@media(max-width: 479px) {
+  .swish-logo-huge-container {
+    width: auto;
+    height: auto;
+  }
+  .swish-logo-huge-image {
+    width: 45%;
+    height: auto;
+  }
+  .swish-logo-huge-root-class-name {
+    top: 350px;
+    left: 0px;
+    right: 0px;
+    width: auto;
+    position: static;
+    align-self: center;
+    margin-top: 120px;
+    margin-left: var(--dl-space-space-twounits);
+    margin-right: var(--dl-space-space-twounits);
+    margin-bottom: 0px;
+  }
+}

@@ -1,0 +1,135 @@
+.sent-container {
+  width: 100%;
+  display: flex;
+  overflow: hidden;
+  min-height: 100vh;
+  align-items: center;
+  flex-direction: column;
+}
+.sent-container1 {
+  display: flex;
+  overflow: hidden;
+  position: relative;
+  align-items: center;
+  flex-direction: column;
+}
+.sent-video {
+  width: 177.77777778vh;
+  height: 100%;
+  min-width: 100%;
+  min-height: 56.25vw;
+}
+.sent-image {
+  width: 200px;
+  object-fit: cover;
+}
+@media(max-width: 767px) {
+  .sent-container {
+    justify-content: flex-start;
+  }
+}
+@media(max-width: 479px) {
+  .sent-video {
+    z-index: 100;
+  }
+  .sent-name {
+    top: 60%;
+    left: 0px;
+    color: rgb(255, 255, 255);
+    right: 0px;
+    width: auto;
+    height: auto;
+    margin: auto;
+    z-index: 101;
+    position: absolute;
+    font-size: 28px;
+    text-align: center;
+    font-family: Museo Sans Rounded 500;
+  }
+  .sent-name1 {
+    top: 72%;
+    left: 0px;
+    color: rgb(255, 255, 255);
+    right: 0px;
+    width: auto;
+    height: auto;
+    margin: auto;
+    z-index: 101;
+    position: absolute;
+    font-size: 40px;
+    text-align: center;
+    font-family: Museo Sans Rounded 500;
+  }
+  .sent-name2 {
+    top: 63.5%;
+    left: 0px;
+    color: rgb(255, 255, 255);
+    right: 0px;
+    width: auto;
+    height: auto;
+    margin: auto;
+    z-index: 101;
+    position: absolute;
+    font-size: 20px;
+    text-align: center;
+    font-family: Museo Sans Rounded 100;
+  }
+  .sent-name3 {
+    top: 66.5%;
+    left: 0px;
+    color: rgb(134, 138, 138);
+    right: 0px;
+    width: auto;
+    height: auto;
+    margin: auto;
+    z-index: 101;
+    position: absolute;
+    font-size: 20px;
+    text-align: center;
+    font-family: Museo Sans Rounded 100;
+  }
+  .sent-date {
+    top: 55%;
+    left: 0px;
+    color: #868a8a;
+    right: 0px;
+    width: auto;
+    height: auto;
+    margin: auto;
+    z-index: 101;
+    position: absolute;
+    font-size: 20px;
+    text-align: center;
+    font-family: Museo Sans Rounded 300;
+  }
+  .sent-button {
+    right: 5%;
+    width: 65px;
+    bottom: 5%;
+    height: 65px;
+    display: flex;
+    z-index: 101;
+    position: absolute;
+    align-items: center;
+    padding-top: 0px;
+    border-width: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+    flex-direction: row;
+    padding-bottom: 0px;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0);
+  }
+  .sent-image {
+    top: 1px;
+    left: 1px;
+    width: 100%;
+    height: 100%;
+    margin: auto;
+    position: absolute;
+    margin-top: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+  }
+}

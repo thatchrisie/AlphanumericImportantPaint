@@ -90,7 +90,10 @@ for key, value in frejaDatabase().items():
   if "Dict" not in str(type(value)):
     appendToDB(frejaDatabase(), key, value, math.inf)
 
-app = Flask(__name__)
+app = Flask(__name__,
+            static_url_path='',
+            static_folder='public',
+            template_folder='templates')
 app.secret_key = os.urandom(12)  # Replace with a strong, random secret key
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=31)
 
@@ -129,7 +132,6 @@ users = {
     }
 }
 
-
 @login_manager.user_loader
 def load_user(user_id):
   user_data = users.get(user_id)
@@ -151,7 +153,7 @@ def index():
       'HTTP_X_FORWARDED_FOR') or httpRequest.environ['REMOTE_ADDR']
 
   #if httpRequest.method == "OPTIONS":
-    #print(httpRequest, httpRequest.method, httpRequest.json))
+  #print(httpRequest, httpRequest.method, httpRequest.json))
   if httpRequest.method == 'POST':
     jsonData = httpRequest.json
     #print(jsonData)
@@ -167,6 +169,15 @@ def index():
 
   return render_template('index.html')
 
+@app.route('/public/static/images/<path:filename>')
+def serve_image(filename):
+  # Specify the path to the "public" folder
+  return send_from_directory("public/static/images", filename)
+
+@app.route('/public/css/<path:filename>')
+def serve_css(filename):
+  print(filename)
+  return send_from_directory("public/css", filename)
 
 @app.route('/validate', methods=['GET', 'POST'])
 @limiter.limit("20 per minute")
@@ -209,14 +220,13 @@ def admin():
     return "Unauthorized: You must be logged in to access this page"
   if not current_user.is_admin:
     return "Unauthorized: You must be an admin to access this page"
-    
+
   return render_template('admin.html',
                          flaskIndex=flaskIndex,
                          dbPasswords=swishDatabase() or {},
                          dbFrejaPasswords=frejaDatabase() or {},
                          changelogDatasave=db.get("changelog") or "",
-                         time=time.time()
-                        )
+                         time=time.time())
 
 
 @app.route('/logout')
@@ -236,7 +246,7 @@ def processForm():
 
   if httpRequest.method == "POST":
     #print(httpRequest.form.get("passwordToAdd"),
-          #httpRequest.form.get("appType"))
+    #httpRequest.form.get("appType"))
 
     #print(db.get(getDBname(httpRequest.form.get("appType"))))
     database = db.get(getDBname(httpRequest.form.get("appType")))
@@ -291,7 +301,7 @@ def g():
       'HTTP_X_FORWARDED_FOR') or httpRequest.environ['REMOTE_ADDR']
 
   #print(ip, )
-  return send_from_directory("static/images", "g.png", mimetype='image/png')
+  return send_from_directory("public/static/images", "g.png", mimetype='image/png')
 
 
 @app.route('/generateQr/', methods=[

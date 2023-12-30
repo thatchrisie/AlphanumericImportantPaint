@@ -1,0 +1,34 @@
+.frfrgningar-icon-container {
+  width: 200px;
+  height: 110px;
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+}
+.frfrgningar-icon-image {
+  width: auto;
+  height: 100%;
+  align-self: center;
+  object-fit: cover;
+}
+.frfrgningar-icon-root-class-name {
+  width: 200px;
+  height: 100%;
+}
+@media(max-width: 479px) {
+  .frfrgningar-icon-container {
+    width: 150px;
+    height: 80px;
+    align-items: center;
+    justify-content: center;
+  }
+  .frfrgningar-icon-image {
+    width: auto;
+    height: 100%;
+  }
+  .frfrgningar-icon-root-class-name {
+    width: auto;
+    height: 100%;
+  }
+}
