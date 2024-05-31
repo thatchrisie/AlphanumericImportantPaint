@@ -9,6 +9,11 @@ python = ">=3.10.0,<3.11"
 flask = "^3.0.0"
 flask-login = "^0.6.2"
 bcrypt = "^4.0.1"
+flask-limiter = "^3.7.0"
+flask-wtf = "^1.2.1"
+replit = "^4.0.0"
+requests = "^2.32.3"
+flask-cors = "^4.0.1"
 
 [tool.pyright]
 # https://github.com/microsoft/pyright/blob/main/docs/configuration.md

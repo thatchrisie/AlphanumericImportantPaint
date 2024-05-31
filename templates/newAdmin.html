@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Admin Panel</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #userGridContainer {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        #userList {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            width: 70%;
+        }
+        .userSlot {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 150px;
+            height: 150px;
+            padding: 10px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+        .userSlot h4 {
+            margin: 0;
+            font-size: 14px;
+            text-align: center;
+        }
+        .userSlot p {
+            margin: 5px 0;
+            font-size: 12px;
+            text-align: center;
+        }
+        .userSlot .whitelistStatus {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+        .editButton {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            padding: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        #hover {
+            position: fixed;
+            background: #000;
+            width: 100%;
+            height: 100%;
+            opacity: 0.6;
+            display: none;
+        }
+        #popup {
+            position: absolute;
+            width: 600px;
+            height: 300px;
+            background: #fff;
+            left: 50%;
+            top: 50%;
+            border-radius: 5px;
+            padding: 20px;
+            margin-left: -300px;
+            margin-top: -150px;
+            text-align: center;
+            box-shadow: 0 0 10px 0 #000;
+            display: none;
+        }
+        #close {
+            position: absolute;
+            background: black;
+            color: white;
+            right: -15px;
+            top: -15px;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            font-size: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 10px 0 #000;
+        }
+    </style>
+</head>
+<body>
+    <form id="emailForm" method="post">
+        <label for="email">Enter Email:</label>
+        <input type="email" id="email" name="email" required>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="submit" value="Submit">
+    </form>
+
+     <div id="userGridContainer">
+        <div id="userList">
+            {% for user_id, user_data in users.items() %}
+            <div class="userSlot" data-email="{{ user_id }}">
+                <h4>{{ user_id }}</h4>
+                <div class="whitelistStatus">
+                    <p>Swish: {{ 'Yes' if user_data['subscriptions']['swish']['whitelisted'] else 'No' }}</p>
+                    <p>Freja: {{ 'Yes' if user_data['subscriptions']['freja']['whitelisted'] else 'No' }}</p>
+                </div>
+                <p>Created: {{ user_data['created_at'] }}</p>
+                <p><button onclick="editUser('{{ user_id }}')">Edit</button></p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div id="hover"></div>
+    <div id="popup">
+        <div id="close">X</div>
+        <div id="popupContent">
+            <!-- Dynamic content will be loaded here -->
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $("#emailForm").submit(function (event) {
+                event.preventDefault();
+                var email = $("#email").val();
+                var csrf_token = $("input[name='csrf_token']").val();
+                $.post("/processForm", { email: email, csrf_token: csrf_token }, function (data) {
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
+                        displayPopup(data, true);
+                    }
+                });
+            });
+
+            $("#close").click(function () {
+                $("#hover, #popup").fadeOut();
+            });
+        });
+
+        function editUser(email) {
+            var csrf_token = $("input[name='csrf_token']").val();
+            $.post("/processForm", { email: email, csrf_token: csrf_token }, function (data) {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    displayPopup(data, false);
+                }
+            });
+        }
+
+        function displayPopup(data, isNewUser) {
+            var content = `
+                <h3>User Information</h3>
+                <p>Email: ${data.email}</p>
+                <p>Password: <input type="password" id="password" placeholder="Enter new password">
+                <span>Current: ${data.password_hash}</span></p>
+            `;
+
+            if (!isNewUser && Object.keys(data.subscriptions).length > 0) {
+                content += `
+                    <h4>Subscriptions</h4>
+                    <div id="subscriptions">
+                        ${Object.entries(data.subscriptions).map(([app, sub]) => `
+                            <div>
+                                <label>${app}</label>
+                                <input type="checkbox" ${sub.whitelisted ? 'checked' : ''}> Whitelisted
+                                <input type="text" value="${sub.expires || ''}" placeholder="Expiry Date (YYYY-MM-DD)">
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            content += `
+                <button onclick="updateUserData('${data.email}', ${isNewUser})">Save</button>
+                ${!isNewUser ? `<button onclick="deleteUser('${data.email}')">Delete</button>` : ''}
+            `;
+
+            $("#popupContent").html(content);
+            $("#hover, #popup").fadeIn();
+        }
+
+        function updateUserData(email, isNewUser) {
+            var password = $("#password").val();
+            var csrf_token = $("input[name='csrf_token']").val();
+            var subscriptions = {};
+            $("#subscriptions > div").each(function () {
+                var app = $(this).find("label").text();
+                var whitelisted = $(this).find("input[type='checkbox']").is(":checked");
+                var expires = $(this).find("input[type='text']").val();
+                subscriptions[app] = { whitelisted: whitelisted, expires: expires };
+            });
+
+            var data = { email: email, password: password, subscriptions: JSON.stringify(subscriptions), csrf_token: csrf_token };
+
+            $.post("/updateUserData", data, function (response) {
+                if (response.status === "success") {
+                    alert("User data updated successfully.");
+                    $("#hover, #popup").fadeOut();
+                    if (isNewUser) {
+                        addUserSlot(email, subscriptions, respone.created_at);
+                    } else {
+                        updateUserSlot(email, subscriptions);
+                    }
+                } else {
+                    alert("Failed to update user data: " + response.message);
+                }
+            });
+        }
+
+        function deleteUser(email) {
+            var csrf_token = $("input[name='csrf_token']").val();
+            $.post("/deleteUser", { email: email, csrf_token: csrf_token }, function (response) {
+                if (response.status === "success") {
+                    alert("User deleted successfully.");
+                    $("#hover, #popup").fadeOut();
+                    removeUserSlot(email);
+                } else {
+                    alert("Failed to delete user: " + response.message);
+                }
+            });
+        }
+
+        function addUserSlot(email, subscriptions, created_at) {
+            var subscriptionText = Object.entries(subscriptions).map(([app, sub]) => `
+                <p>${app}: ${sub.whitelisted ? 'Yes' : 'No'}</p>
+            `).join('');
+
+            var newUserSlot = `
+                <div class="userSlot" data-email="${email}">
+                    <h4>${email}</h4>
+                    <div class="whitelistStatus">
+                        ${subscriptionText}
+                    </div>
+                    <p>Created: ${created_at}</p>
+                    <p><button onclick="editUser('${email}')">Edit</button></p>
+                </div>
+            `;
+
+            $("#userList").append(newUserSlot);
+        }
+
+        function updateUserSlot(email, subscriptions) {
+            var slot = $(`.userSlot[data-email='${email}']`);
+            var subscriptionText = Object.entries(subscriptions).map(([app, sub]) => `${app}: ${sub.whitelisted ? 'Whitelisted' : 'Not Whitelisted'}, Expires: ${sub.expires || 'None'}`).join(', ');
+            slot.html(`<p>${email} <button onclick="editUser('${email}')">Edit</button></p><p>${subscriptionText}</p>`);
+        }
+
+        function removeUserSlot(email) {
+            $(`.userSlot[data-email='${email}']`).remove();
+        }
+    </script>
+</body>
+</html>
